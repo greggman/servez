@@ -1,8 +1,8 @@
 # Servez
 
-A simple web server for local web page development.
+A simple web server for local web development.
 
-<img src="servez.png" width="50%" height="50%" />
+![screenshow](servez.png)
 
 ## What?
 
