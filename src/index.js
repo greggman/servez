@@ -98,6 +98,7 @@ ipcRenderer.on('started', () => {
 ipcRenderer.on('stopped', () => {
   startElem.textContent = "Start";
   launchElem.disabled = true;
+  log("server stopped");
 });
 
 ipcRenderer.send('getSettings');

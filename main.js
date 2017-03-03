@@ -10,7 +10,6 @@ const express = require('express');
 const serveIndex = require('serve-index');
 const path = require('path');
 const fs = require('fs');
-const debug = require('debug')('main');
 
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -33,9 +32,8 @@ const staticOptions = {
   setHeaders: setHeaders,
 };
 
-function log(...args) {
-  logToWindow(...args);
-}
+console.log(process.env.SERVEZ_ECHO);
+const debug = process.env.SERVEZ_ECHO ? logToWindow : require('debug')('main');
 
 function setHeaders(res /*, path, stat */) {
   res.set({
@@ -94,28 +92,28 @@ function sendToWindow(...args) {
 }
 
 function serverClosed() {
-  log("serverClosed")
+  debug("serverClosed");
   server = null;
   expressApp = null;
   running = false;
   sendToWindow('stopped');
-  log("restart:", restart);
+  debug("restart:", restart);
   if (restart) {
     restart = false;
-    log("startServer-restart");
+    debug("startServer-restart");
     startServer();
   }
 }
 
 function startServer() {
-  log("startServer");
-  log("running:", running);
+  debug("startServer");
+  debug("running:", running);
   if (running) {
     restart = true;
     stopServer();
     return;
   }
-  log("really start");
+  debug("really start");
   const root = settings.root;
   const port = settings.port;
   const local = settings.local;
@@ -124,15 +122,15 @@ function startServer() {
   if (settings.index) {
     expressApp.use((req, res, next) => {
       const base = path.join(root, req.path);
-      log("checking:", base);
+      debug("checking:", base);
       if (fs.existsSync(base)) {
-        log("stat:", base);
+        debug("stat:", base);
         const stat = fs.statSync(base);
         if (stat.isDirectory()) {
           const index = path.join(base, "index.html");
-          log("check:", index);
+          debug("check:", index);
           if (fs.existsSync(index)) {
-            log("send:", index);
+            debug("send:", index);
             res.sendFile(index);
             return;
           }
@@ -150,7 +148,7 @@ function startServer() {
   expressApp.use(express.static(root, staticOptions));
   expressApp.options(/.*/, handleOPTIONS);
   try {
-    logToWindow("starting server");
+    debug("starting server");
     server = expressApp.listen(port, hostname);
     server.on('error', (e) => {
        errorToWindow("ERROR:", e.message);
@@ -158,22 +156,21 @@ function startServer() {
     server.on('listening', () => {
       running = true;
       sendToWindow('started');
-      logToWindow("started server on port:", local ? "127.0.0.1:" : "::", port, "for path:", root);
+      logToWindow("server started on port:", local ? "127.0.0.1:" : "::", port, "for path:", root);
     });
     server.on('close', serverClosed);
   } catch (e) {
-    log("error starting server");
+    debug("error starting server");
     errorToWindow("ERROR:", e, e.message, e.stack);
   }
 }
 
 function stopServer() {
-  log("stopServer");
-  log("running:", running);
-  log("server:", server);
+  debug("stopServer");
+  debug("running:", running);
+  debug("server:", server);
   if (running && server) {
-    log("stopServer really");
-    logToWindow("stopping server");
+    debug("stopServer really");
     server.close();
   }
 }
@@ -237,13 +234,6 @@ function setupMenus() {
     {
       label: 'View',
       submenu: [
-        {
-          label: 'Reload',
-          accelerator: 'CmdOrCtrl+R',
-          click(item, focusedWindow) {
-            if (focusedWindow) focusedWindow.reload();
-          }
-        },
         {
           label: 'Toggle Developer Tools',
           accelerator: isOSX ? 'Alt+Command+I' : 'Ctrl+Shift+I',
