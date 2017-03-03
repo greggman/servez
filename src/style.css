@@ -1,0 +1,113 @@
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+body {
+    margin: 0;
+    background-color: orange;
+    color: black;
+    font-family: sans-serif;
+}
+pre {
+    margin: 0;
+}
+h1 {
+    margin: 0;
+}
+h2 {
+    margin: 0;
+    font-size: medium;
+    margin-bottom: 1em;
+}
+#outer {
+    padding: 1em;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+#rootpair {
+    display: flex;
+}
+#rootpair .left {
+    flex: 1 1 auto;
+}
+#rootpair .right {
+    flex: 0 0 auto;
+    margin-left: 1em;
+}
+.form {
+    flex: 0 0 auto;
+}
+input {
+    font-size: medium;
+}
+.text {
+    margin-bottom: 1.5em;
+}
+.text label {
+    display: block;
+    padding-bottom: .25em;
+}
+.checkbox {
+    display: flex;
+}
+.checkbox label {
+    order: 2;
+}
+.buttons {
+    padding-top: 1em;
+}
+.buttons button {
+    font-size: large;
+}
+button {
+   border-radius: .5em;
+   border:1px solid #fa2;
+   padding: .5em 1em;
+   text-decoration: none;
+   background-color: #ffec64;
+
+   text-shadow:1px 1px 0px #ffee66;
+}
+button:hover:enabled {
+   box-shadow:inset 1px 1px 0px 0px #fff6af;
+   background-color:#dc4;
+}
+button:disabled {
+    background-color: #888;
+    color: #666;
+    text-shadow: none;
+}
+.settings, #logview {
+    border: 2px solid #ffd358;
+    padding: 1em;
+    border-radius: 1em;
+}
+#logview {
+    margin-top: 1em;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+#loghead {
+    flex: 0 0 auto;
+    margin-bottom: .5em;
+}
+#log {
+    flex: 1 1 auto;
+    overflow: auto;
+    background-color: #ffba3c;
+    padding: .25em .5em;
+}
+.error {
+    color: red;
+    font-weight: bold;
+}
+.bad {
+    border: 1px solid red;
+}
+
+
