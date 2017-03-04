@@ -4,7 +4,7 @@
 
 A simple web server for local web development.
 
-![screenshow](servez.png)
+![screenshow](servez.gif)
 
 ## Download
 
