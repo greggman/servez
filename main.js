@@ -20,7 +20,10 @@ let expressApp = null;
 let server = null;
 let running = false;
 let restart = false;
-const settings = {
+
+const dataDir = app.getPath("userData");
+const settingsPath = path.join(dataDir, "config.json");
+const defaultSettings = {
   port: 8080,
   root: app.getPath("home"),
   local: false,
@@ -28,6 +31,45 @@ const settings = {
   dirs: true,
   index: true,
 };
+let settings;
+try {
+  settings = JSON.parse(fs.readFileSync(settingsPath, {encoding: 'utf8'}));
+  const keys = Object.keys(defaultSettings).sort();
+  if (!compareArrays(keys, Object.keys(settings).sort())) {
+    throw new Error("bad settings");
+  }
+  keys.forEach(key => {
+    const atype = typeof defaultSettings[key];
+    const btype = typeof settings[key];
+    if (atype !== btype) {
+      throw new Error(`${key} of wrong type. Expected ${atype}, was ${btype}`);
+    }
+  });
+} catch (e) {
+  settings = Object.assign({}, defaultSettings);
+}
+
+function compareArrays(a, b) {
+  if (!a) {
+    return (!b);
+  } else if (!b) {
+    return false
+  }
+
+  const len = a.length;
+  if (len !== b.length) {
+    return false;
+  }
+
+  for (var i = 0; i < len; ++i) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 const staticOptions = {
   fallthrough: false,
   setHeaders: setHeaders,
@@ -166,6 +208,7 @@ function startServer() {
     });
     server.on('listening', () => {
       running = true;
+      saveSettings();
       sendToWindow('started');
       logToWindow("server started on port:", local ? "127.0.0.1:" : "::", port, "for path:", root);
     });
@@ -184,6 +227,14 @@ function stopServer() {
     debug("stopServer really");
     //server.close();
     server.destroy();
+  }
+}
+
+function saveSettings() {
+  try {
+    fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
+  } catch (e) {
+    errorToWindow('ERROR: could not save settings:', e);
   }
 }
 
