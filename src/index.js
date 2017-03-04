@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const browseRootElem = $("#browseRoot");
 const rootElem = $("#root");
-const rootpairElem = $("#rootpair");
+const rootareaElem = $("#rootarea");
 const startElem = $("#start");
 const launchElem = $("#launch");
 const logElem = $("#log");
@@ -103,6 +103,23 @@ ipcRenderer.on('stopped', () => {
 
 ipcRenderer.send('getSettings');
 
+function removeClass(elem, className) {
+  const classNames = elem.className.split(" ");
+  let ndx;
+  while ((ndx = classNames.indexOf(className)) >= 0) {
+    classNames.splice(ndx, 1);
+  }
+  elem.className = classNames.join(" ");
+}
+
+function addClass(elem, className) {
+  const classNames = elem.className.split(" ");
+  if (classNames.indexOf(className) < 0) {
+    classNames.push(className);
+    elem.className = classNames.join(" ");
+  }
+}
+
 function updateSettings() {
   const newSettings = {};
   Object.keys(settingsInfo).forEach(id => {
@@ -110,10 +127,11 @@ function updateSettings() {
     info.get(newSettings);
   });
   if (fs.existsSync(newSettings.root)) {
-    rootpairElem.className = "good";
+    removeClass(rootareaElem, "bad");
     ipcRenderer.send('updateSettings', newSettings);
   } else {
-    rootpairElem.className = "bad";
+    error("non existent path:", newSettings.root);
+    addClass(rootareaElem, "bad");
   }
 }
 
