@@ -10,7 +10,7 @@ A simple web server for local web development.
 
 [Click Here](https://github.com/greggman/servez/releases/latest)
 
-Choose the `.dmg` for mac or the `.exe` for Windows.
+Choose the `.dmg` for mac, the `.exe` for Windows, or the `.AppImage` for Linux.
 
 ## What?
 
