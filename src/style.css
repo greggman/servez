@@ -6,8 +6,8 @@ html {
 }
 body {
     margin: 0;
-    background-color: orange;
-    color: black;
+    background-color: #1a2e5d;
+    color: white;
     font-family: sans-serif;
 }
 pre {
@@ -64,13 +64,10 @@ input {
     font-size: large;
 }
 button {
-   border-radius: .5em;
-   border:1px solid #fa2;
+   border: none;
    padding: .5em 1em;
    text-decoration: none;
-   background-color: #ffec64;
-
-   text-shadow:1px 1px 0px #ffee66;
+   background-color: #8ca4ff;
 }
 button:hover:enabled {
    box-shadow:inset 1px 1px 0px 0px #fff6af;
@@ -81,10 +78,15 @@ button:disabled {
     color: #666;
     text-shadow: none;
 }
-.settings, #logview {
-    border: 2px solid #ffd358;
+#title {
+    margin-bottom: 1em;
+}
+#title tr, #title td {
+    vertical-align: middle;
+}
+.settings, #logview, #title {
+    background-color: #284eb7;
     padding: 1em;
-    border-radius: 1em;
 }
 #logview {
     margin-top: 1em;
@@ -99,7 +101,7 @@ button:disabled {
 #log {
     flex: 1 1 auto;
     overflow: auto;
-    background-color: #ffba3c;
+    background-color: #001e56;
     padding: .25em .5em;
 }
 .error {
@@ -107,7 +109,7 @@ button:disabled {
     font-weight: bold;
 }
 .bad {
-    border: 1px solid red;
+    background-color: red;
 }
 
 
