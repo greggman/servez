@@ -2,11 +2,11 @@
 
 * Make landing page
 * Make auto build
-* Log Good Requests
-* Make settings persistent
 
 # Done
 
+* Make settings persistent
+* Log Good Requests
 * Fix shutting down server
 * Fix that changing path doesn't change things
 * Add Icon
