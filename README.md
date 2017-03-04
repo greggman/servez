@@ -1,5 +1,7 @@
 # Servez
 
+<img src="icon.png" width="128px" />
+
 A simple web server for local web development.
 
 ![screenshow](servez.png)
