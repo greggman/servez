@@ -10,6 +10,7 @@ const express = require('express');
 const serveIndex = require('serve-index');
 const path = require('path');
 const fs = require('fs');
+const enableDestroy = require('server-destroy');
 
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -28,11 +29,10 @@ const settings = {
   index: true,
 };
 const staticOptions = {
-  fallthrough: true,
+  fallthrough: false,
   setHeaders: setHeaders,
 };
 
-console.log(process.env.SERVEZ_ECHO);
 const debug = process.env.SERVEZ_ECHO ? logToWindow : require('debug')('main');
 
 function setHeaders(res /*, path, stat */) {
@@ -105,6 +105,11 @@ function serverClosed() {
   }
 }
 
+function errorHandler(err, req, res, next) {
+  errorToWindow(`ERROR: ${req.method} ${req.url} ${err}`);
+  res.status(500).send(`<pre>${err}</pre>`);
+}
+
 function startServer() {
   debug("startServer");
   debug("running:", running);
@@ -118,7 +123,11 @@ function startServer() {
   const port = settings.port;
   const local = settings.local;
   const hostname = local ? "127.0.0.1" : undefined;
-  expressApp = express();
+  expressApp = express()
+  expressApp.use((req, res, next) => {
+    logToWindow(req.method, req.originalUrl);
+    next();
+  });
   if (settings.index) {
     expressApp.use((req, res, next) => {
       const base = path.join(root, req.path);
@@ -146,10 +155,12 @@ function startServer() {
     }));
   }
   expressApp.use(express.static(root, staticOptions));
+  expressApp.use(errorHandler);
   expressApp.options(/.*/, handleOPTIONS);
   try {
     debug("starting server");
     server = expressApp.listen(port, hostname);
+    enableDestroy(server);
     server.on('error', (e) => {
        errorToWindow("ERROR:", e.message);
     });
@@ -171,7 +182,8 @@ function stopServer() {
   debug("server:", server);
   if (running && server) {
     debug("stopServer really");
-    server.close();
+    //server.close();
+    server.destroy();
   }
 }
 
@@ -184,6 +196,7 @@ function updateSettings(event, newSettings) {
 
 function getSettings(event) {
   event.sender.send('settings', settings);
+  event.sender.send((running && server) ? 'started' : 'stopped');
 }
 
 function launch(event) {
@@ -224,7 +237,8 @@ app.on('ready', () => {
 app.on('window-all-closed', () => {
   mainWebContents = null;
   if (running && server) {
-    server.close();
+    //server.close();
+    server.destroy();
   }
   app.quit();
 });
