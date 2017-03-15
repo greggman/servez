@@ -71,7 +71,7 @@ function compareArrays(a, b) {
 }
 
 const staticOptions = {
-  fallthrough: false,
+  fallthrough: true,
   setHeaders: setHeaders,
 };
 
@@ -147,9 +147,16 @@ function serverClosed() {
   }
 }
 
-function errorHandler(err, req, res, next) {
+function localErrorHandler(err, req, res, next) {
+  debug(`ERROR: ${req.method} ${req.url} ${err}`);
   errorToWindow(`ERROR: ${req.method} ${req.url} ${err}`);
   res.status(500).send(`<pre>${err}</pre>`);
+}
+
+function nonErrorLocalErrorHandler(req, res, next) {
+  debug(`ERROR: ${req.method} ${req.url} 404`);
+  errorToWindow(`ERROR: ${req.method} ${req.url}`);
+  res.status(404).send(`<pre>ERROR 404: No such path ${req.path}</pre>`);
 }
 
 function startServer() {
@@ -170,35 +177,17 @@ function startServer() {
     logToWindow(req.method, req.originalUrl);
     next();
   });
-  if (settings.index) {
-    expressApp.use((req, res, next) => {
-      const base = path.join(root, req.path);
-      debug("checking:", base);
-      if (fs.existsSync(base)) {
-        debug("stat:", base);
-        const stat = fs.statSync(base);
-        if (stat.isDirectory()) {
-          const index = path.join(base, "index.html");
-          debug("check:", index);
-          if (fs.existsSync(index)) {
-            debug("send:", index);
-            res.sendFile(index);
-            return;
-          }
-        }
-      }
-      next();
-    });
-  }
+  staticOptions.index = settings.index ? "index.html" : false;
+  expressApp.use(express.static(root, staticOptions));
   if (settings.dirs) {
     expressApp.use(serveIndex(root, {
       icons: true,
       stylesheet: path.join(__dirname, "src", "listing.css"),
     }));
   }
-  expressApp.use(express.static(root, staticOptions));
-  expressApp.use(errorHandler);
   expressApp.options(/.*/, handleOPTIONS);
+  expressApp.use(nonErrorLocalErrorHandler);
+  expressApp.use(localErrorHandler);
   try {
     debug("starting server");
     server = expressApp.listen(port, hostname);
