@@ -32,7 +32,7 @@ things with their system. No adding to paths, no downloading
 
 *   Install node.js
 
-        You can [download it here](https://nodejs.org).
+    You can [download it here](https://nodejs.org).
 
 *   clone this repo
 
