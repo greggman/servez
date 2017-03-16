@@ -28,6 +28,24 @@ things with their system. No adding to paths, no downloading
 
 ## Development
 
+### Setup
+
+*   Install node.js
+
+        You can [download it here](https://nodejs.org).
+
+*   clone this repo
+
+        git clone https://github.com/greggman/servez.git
+
+*   change to the project's folder
+
+        cd servez
+
+*   install dependencies
+
+        npm install
+
 ### Organization
 
     main.js          // runs the browser process
