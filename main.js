@@ -7,6 +7,7 @@ const electron = require('electron');
 const webContents = electron.webContents;
 const ipcMain = electron.ipcMain;
 const express = require('express');
+const cors = require('cors');
 const serveIndex = require('serve-index');
 const path = require('path');
 const fs = require('fs');
@@ -85,18 +86,6 @@ function setHeaders(res /*, path, stat */) {
   });
 }
 
-function handleOPTIONS(req, res) {
-  res.removeHeader('Content-Type');
-  res.writeHead(200, {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-    'Access-Control-Allow-Headers': 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept',
-    'Access-Control-Allow-Credentials': false,
-    'Access-Control-Max-Age': 86400,
-  });
-  res.end('{}');
-}
-
 function createWindow() {
   const {width: screenWidth, height: screenHeight} = electron.screen.getPrimaryDisplay().workAreaSize;
   const space = 50;
@@ -173,6 +162,9 @@ function startServer() {
   const local = settings.local;
   const hostname = local ? "127.0.0.1" : undefined;
   expressApp = express()
+  if (settings.cors) {
+    expressApp.use(cors());
+  }
   expressApp.use((req, res, next) => {
     logToWindow(req.method, req.originalUrl);
     next();
@@ -185,7 +177,6 @@ function startServer() {
       stylesheet: path.join(__dirname, "src", "listing.css"),
     }));
   }
-  expressApp.options(/.*/, handleOPTIONS);
   expressApp.use(nonErrorLocalErrorHandler);
   expressApp.use(localErrorHandler);
   try {

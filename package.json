@@ -33,6 +33,7 @@
   },
   "homepage": "https://github.com/greggman/saabaa#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "debug": "^2.6.1",
     "express": "^4.15.0",
     "serve-index": "^1.8.0",
