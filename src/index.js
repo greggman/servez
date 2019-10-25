@@ -146,16 +146,23 @@ launchElem.addEventListener('click', e => {
   ipcRenderer.send('launch');
 });
 
-browseRootElem.addEventListener('click', e => {
-  const paths = dialog.showOpenDialog(remote.getCurrentWindow(), {
+async function getFolderToServe() {
+  const result = await dialog.showOpenDialog(remote.getCurrentWindow(), {
     title: "Select Folder to Serve",
     defaultPath: rootElem.value,
     properties: ["openDirectory"],
   });
-  if (paths && paths.length) {
-    rootElem.value = paths[0];
-    updateSettings();
+  if (!result.canceled) {
+    const paths = result.filePaths;
+    if (paths && paths.length) {
+      rootElem.value = paths[0];
+      updateSettings();
+    }
   }
+}
+
+browseRootElem.addEventListener('click', e => {
+  getFolderToServe();
 });
 clearElem.addEventListener('click', clearLog);
 
