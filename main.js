@@ -95,6 +95,9 @@ function createWindow() {
   const height = screenHeight - space * 2;
 
   mainWindow = new BrowserWindow({
+    webPreferences: {
+        nodeIntegration: true
+    },
     defaultEncoding: "utf8",
   });
 
@@ -293,7 +296,7 @@ function setupMenus() {
 
 
   if (isOSX) {
-    const name = electron.app.getName();
+    const name = electron.app.name;
     menuTemplate.unshift({
       label: name,
       submenu: [

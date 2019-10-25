@@ -1,6 +1,5 @@
 const $ = document.querySelector.bind(document);
-const {ipcRenderer} = require('electron')
-const remote = require('electron').remote;
+const {ipcRenderer, remote} = require('electron')
 const dialog = remote.dialog;
 const fs = require('fs');
 
