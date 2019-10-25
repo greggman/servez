@@ -36,6 +36,7 @@
     "cors": "^2.8.5",
     "debug": "^4.1.1",
     "express": "^4.17.1",
+    "optionator": "^0.8.2",
     "serve-index": "^1.9.1",
     "server-destroy": "^1.0.1"
   },
