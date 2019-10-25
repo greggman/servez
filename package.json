@@ -13,8 +13,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development electron main.js",
     "startp": "cross-env NODE_ENV=production electron main.js",
-    "pack": "build --dir",
-    "dist": "build"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --publish never"
   },
   "repository": {
     "type": "git",
