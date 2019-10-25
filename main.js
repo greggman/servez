@@ -1,5 +1,44 @@
 "use strict";
 
+const makeOptions = require('optionator');
+
+const optionSpec = {
+  options: [
+    { option: 'help', alias: 'h', type: 'Boolean', description: 'displays help' },
+    { option: 'port', alias: 'p', type: 'Int', description: 'port', default: '8080' },
+    { option: 'dirs', type: 'Boolean', description: 'show directory listing', default: 'true', },
+    { option: 'cors', type: 'Boolean', description: 'send CORS headers', default: 'true', },
+    { option: 'local', type: 'Boolean', description: 'local machine only', default: 'false', },
+    { option: 'index', type: 'Boolean', description: 'serve index.html for directories', default: 'true', },
+  ],
+  prepend: `Usage: servez${process.platform === 'win32' ? '.exe' : '' } [options] path-to-serve`,
+  helpStyle: {
+    typeSeparator: '=',
+    descriptionSeparator: ' : ',
+    initialIndent: 4,
+  },
+};
+/* eslint-enable object-curly-newline */
+const optionator = makeOptions(optionSpec);
+
+let args;
+try {
+  args = optionator.parse(process.argv);
+} catch (e) {
+  console.error(e);
+  printHelp();
+}
+
+function printHelp() {
+  console.log(optionator.generateHelp());
+  process.exit(0);  // eslint-disable-line
+}
+
+if (args.help) {
+  printHelp();
+}
+
+
 const isOSX = process.platform === 'darwin';
 const isDevMode = process.env.NODE_ENV === 'development';
 
@@ -32,6 +71,7 @@ const defaultSettings = {
   dirs: true,
   index: true,
 };
+
 let settings;
 try {
   settings = JSON.parse(fs.readFileSync(settingsPath, {encoding: 'utf8'}));
@@ -76,7 +116,8 @@ const staticOptions = {
   setHeaders: setHeaders,
 };
 
-const debug = process.env.SERVEZ_ECHO ? logToWindow : require('debug')('main');
+const isShell = args._.length > 0;
+const debug = (process.env.SERVEZ_ECHO && !isShell) ? logToWindow : require('debug')('main');
 
 function setHeaders(res /*, path, stat */) {
   res.set({
@@ -191,7 +232,9 @@ function startServer() {
     });
     server.on('listening', () => {
       running = true;
-      saveSettings();
+      if (!isShell) {
+        saveSettings();
+      }
       sendToWindow('started');
       logToWindow("server started on port:", local ? "127.0.0.1:" : "::", port, "for path:", root);
     });
@@ -239,7 +282,11 @@ function launch(event) {
 }
 
 function logToWindow(...args) {
-  sendToWindow('log', ...args);
+  if (isShell) {
+    console.log(...args);
+  } else {
+    sendToWindow('log', ...args);
+  }
 }
 
 function errorToWindow(...args) {
@@ -264,21 +311,60 @@ function startIfReady() {
   createWindow();
 }
 
-app.on('ready', () => {
-  startIfReady();
-});
+if (isShell) {
+  settings.port = args.port;
+  settings.dirs = args.dirs;
+  settings.local = args.local;
+  settings.index = args.index;
+  settings.cors = args.cors;
+  settings.root = args._[0];
+  startServer();
+} else {
 
-app.on('window-all-closed', () => {
-  mainWebContents = null;
-  if (running && server) {
-    //server.close();
-    server.destroy();
-  }
-  app.quit();
-});
+  app.on('ready', () => {
+    startIfReady();
+  });
+
+  app.on('window-all-closed', () => {
+    mainWebContents = null;
+    if (running && server) {
+      //server.close();
+      server.destroy();
+    }
+    app.quit();
+  });
+}
 
 function setupMenus() {
   const menuTemplate = [
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        ...(isOSX ? [
+          { role: 'pasteAndMatchStyle' },
+          { role: 'delete' },
+          { role: 'selectAll' },
+          { type: 'separator' },
+          {
+            label: 'Speech',
+            submenu: [
+              { role: 'startspeaking' },
+              { role: 'stopspeaking' }
+            ]
+          }
+        ] : [
+          { role: 'delete' },
+          { type: 'separator' },
+          { role: 'selectAll' }
+        ])
+      ]
+    },    
     {
       label: 'View',
       submenu: [
