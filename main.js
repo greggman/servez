@@ -70,7 +70,9 @@ const defaultSettings = {
   cors: true,
   dirs: true,
   index: true,
+  recent: [],
 };
+const maxRecent = 10;
 
 let settings;
 try {
@@ -219,6 +221,7 @@ function startServer() {
     expressApp.use(serveIndex(root, {
       icons: true,
       stylesheet: path.join(__dirname, "src", "listing.css"),
+      template: path.join(__dirname, "src", "listing.html"),
     }));
   }
   expressApp.use(nonErrorLocalErrorHandler);
@@ -236,6 +239,7 @@ function startServer() {
         saveSettings();
       }
       sendToWindow('started');
+      sendToWindow('settings', settings);
       logToWindow("server started on port:", local ? "127.0.0.1:" : "::", port, "for path:", root);
     });
     server.on('close', serverClosed);
@@ -258,6 +262,13 @@ function stopServer() {
 
 function saveSettings() {
   try {
+    // remove root from recent
+    settings.recent = settings.recent.filter(v => v !== settings.root);
+    // add root to recent
+    settings.recent.unshift(settings.root);
+    // remove excess
+    settings.recent.splice(maxRecent, settings.length - maxRecent);
+
     fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
   } catch (e) {
     errorToWindow('ERROR: could not save settings:', e);
@@ -265,8 +276,17 @@ function saveSettings() {
 }
 
 function updateSettings(event, newSettings) {
-  Object.assign(settings, newSettings);
-  if (running) {
+  let changed = false;
+  // this is horrible but for now it works
+  for (const key of Object.keys(newSettings)) {
+    const newValue = newSettings[key];
+    const oldValue = settings[key];
+    if (!Array.isArray(oldValue) && oldValue !== newValue) {
+      changed = true;
+      settings[key] = newValue;
+    }
+  }
+  if (changed && running) {
     startServer();
   }
 }
