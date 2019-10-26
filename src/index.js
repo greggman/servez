@@ -103,19 +103,51 @@ ipcRenderer.on('stopped', () => {
 ipcRenderer.send('getSettings');
 
 function removeClass(elem, className) {
-  const classNames = elem.className.split(" ");
-  let ndx;
-  while ((ndx = classNames.indexOf(className)) >= 0) {
-    classNames.splice(ndx, 1);
-  }
-  elem.className = classNames.join(" ");
+  elem.classList.remove(className);
 }
 
 function addClass(elem, className) {
-  const classNames = elem.className.split(" ");
-  if (classNames.indexOf(className) < 0) {
-    classNames.push(className);
-    elem.className = classNames.join(" ");
+  elem.classList.add(className);
+}
+
+class Dropdown {
+  constructor(elem, callback) {
+    this.toggle = this.toggle.bind(this);
+    this.hide = this.hide.bind(this);
+    this.callback = callback;
+    this.elem = elem;
+    this.buttonElem = elem.querySelector('button');
+    this.contentElem = elem.querySelector('div');
+    this.buttonElem.addEventListener('click', this.toggle);
+    this.contentElem.addEventListener('blur', this.hide);
+  }
+  toggle() {
+    const style = this.contentElem.style;
+    const show = !!style.display;
+    style.display = show ? '' : 'block';
+    if (show) {
+      this.contentElem.focus();
+    }
+  }
+  hide() {
+    const style = this.contentElem.style;
+    const show = !!style.display;
+    if (show) {
+      this.toggle();
+    }
+  }
+  setOptions(options) {
+    this.contentElem.innerHTML = '';
+    options.forEach((option, ndx) => {
+      const div = document.createElement('div');
+      div.textContent = option;
+      div.addEventListener('click', () => {
+        this.hide();
+        this.callback(option);
+      });
+      this.contentElem.appendChild(div);
+    });
+    this.elem.style.display = options.length ? '' : 'none';
   }
 }
 
@@ -160,6 +192,20 @@ async function getFolderToServe() {
     }
   }
 }
+
+const recent = new Dropdown($('#recent'), (newPath) => {
+  rootElem.value = newPath;
+  updateSettings();
+});
+
+settingsInfo.recent = {
+  set: settings => {
+    recent.setOptions(settings.recent || ['abc', 'def', 'ghi']);
+  },
+  get: settings => {
+    //
+  },
+};
 
 browseRootElem.addEventListener('click', e => {
   getFolderToServe();

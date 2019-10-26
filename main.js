@@ -70,6 +70,7 @@ const defaultSettings = {
   cors: true,
   dirs: true,
   index: true,
+  recent: [],
 };
 
 let settings;
@@ -219,6 +220,7 @@ function startServer() {
     expressApp.use(serveIndex(root, {
       icons: true,
       stylesheet: path.join(__dirname, "src", "listing.css"),
+      template: path.join(__dirname, "src", "listing.html"),
     }));
   }
   expressApp.use(nonErrorLocalErrorHandler);

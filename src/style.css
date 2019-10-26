@@ -57,8 +57,34 @@ input {
 .checkbox label {
     order: 2;
 }
+
+.icon {
+  
+}
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown>div {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #DDD;
+    color: black;
+    min-width: 250px;
+    z-index: 1;
+    border: 1px solid #444;
+}
+.dropdown>div>div {
+    padding: .1em;
+}
+.dropdown>div>div:hover {
+    background-color: #888;
+}
+
 .buttons {
-    padding-top: 1em;
+    padding-top: s1em;
 }
 .buttons button {
     font-size: large;
