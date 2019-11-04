@@ -66,6 +66,7 @@ const defaultSettings = {
   cors: true,
   dirs: true,
   index: true,
+  scan: true,
   recent: [],
 };
 const maxRecent = 10;
@@ -180,12 +181,12 @@ function startServer() {
         error: errorToWindow,
       },
     }));
-    servez.on('start', () => {
+    servez.on('start', (startInfo) => {
       running = true;
       if (!isShell) {
         saveSettings();
       }
-      sendToWindow('started');
+      sendToWindow('started', startInfo);
       sendToWindow('settings', settings);
     });
     servez.on('close', serverClosed);
@@ -241,9 +242,8 @@ function getSettings(event) {
   event.sender.send((running && servez) ? 'started' : 'stopped');
 }
 
-function launch(event) {
-  const url = "http://localhost:" + settings.port;
-  electron.shell.openExternal(url);
+function launch(event, startInfo) {
+  electron.shell.openExternal(startInfo.baseUrl);
 }
 
 function logToWindow(...args) {
@@ -293,7 +293,7 @@ if (isShell) {
   app.on('window-all-closed', () => {
     mainWebContents = null;
     if (running && servez) {
-      servez.destroy();
+      servez.close();
     }
     app.quit();
   });

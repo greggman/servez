@@ -39,7 +39,7 @@
     "optionator": "^0.8.2",
     "serve-index": "^1.9.1",
     "server-destroy": "^1.0.1",
-    "servez-lib": "^1.1.2"
+    "servez-lib": "^1.2.0"
   },
   "devDependencies": {
     "cross-env": "^6.0.3",

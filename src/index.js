@@ -13,6 +13,7 @@ const clearElem = $("#clear");
 
 launchElem.disabled = true;
 
+let startInfo;
 const settingsInfo = {
 };
 
@@ -89,7 +90,8 @@ ipcRenderer.on('error', (event, ...args) => {
   error(...args);
 });
 
-ipcRenderer.on('started', () => {
+ipcRenderer.on('started', (event, newStartInfo) => {
+  startInfo = newStartInfo;
   startElem.textContent = "Stop";
   launchElem.disabled = false;
 });
@@ -180,7 +182,7 @@ startElem.addEventListener('click', e => {
 });
 
 launchElem.addEventListener('click', e => {
-  ipcRenderer.send('launch');
+  ipcRenderer.send('launch', startInfo);
 });
 
 async function getFolderToServe() {
