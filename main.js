@@ -45,19 +45,15 @@ const isDevMode = process.env.NODE_ENV === 'development';
 const electron = require('electron');
 const webContents = electron.webContents;
 const ipcMain = electron.ipcMain;
-const express = require('express');
-const cors = require('cors');
-const serveIndex = require('serve-index');
 const path = require('path');
 const fs = require('fs');
-const enableDestroy = require('server-destroy');
+const Servez = require('servez-lib');
 
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 let mainWindow = null;
 let mainWebContents = null;
-let expressApp = null;
-let server = null;
+let servez = null;
 let running = false;
 let restart = false;
 
@@ -113,21 +109,8 @@ function compareArrays(a, b) {
   return true;
 }
 
-const staticOptions = {
-  fallthrough: true,
-  setHeaders: setHeaders,
-};
-
 const isShell = args._.length > 0;
 const debug = (process.env.SERVEZ_ECHO && !isShell) ? logToWindow : require('debug')('main');
-
-function setHeaders(res /*, path, stat */) {
-  res.set({
-    'Cache-Control': 'no-cache, no-store, must-revalidate', // HTTP 1.1.
-    'Pragma':        'no-cache',                            // HTTP 1.0.
-    'Expires':       '0',                                   // Proxies.
-  });
-}
 
 function createWindow() {
   const {width: screenWidth, height: screenHeight} = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -170,8 +153,7 @@ function sendToWindow(...args) {
 
 function serverClosed() {
   debug("serverClosed");
-  server = null;
-  expressApp = null;
+  servez = null;
   running = false;
   sendToWindow('stopped');
   debug("restart:", restart);
@@ -180,18 +162,6 @@ function serverClosed() {
     debug("startServer-restart");
     startServer();
   }
-}
-
-function localErrorHandler(err, req, res, next) {
-  debug(`ERROR: ${req.method} ${req.url} ${err}`);
-  errorToWindow(`ERROR: ${req.method} ${req.url} ${err}`);
-  res.status(500).send(`<pre>${err}</pre>`);
-}
-
-function nonErrorLocalErrorHandler(req, res, next) {
-  debug(`ERROR: ${req.method} ${req.url} 404`);
-  errorToWindow(`ERROR: ${req.method} ${req.url}`);
-  res.status(404).send(`<pre>ERROR 404: No such path ${req.path}</pre>`);
 }
 
 function startServer() {
@@ -203,46 +173,22 @@ function startServer() {
     return;
   }
   debug("really start");
-  const root = settings.root;
-  const port = settings.port;
-  const local = settings.local;
-  const hostname = local ? "127.0.0.1" : undefined;
-  expressApp = express()
-  if (settings.cors) {
-    expressApp.use(cors());
-  }
-  expressApp.use((req, res, next) => {
-    logToWindow(req.method, req.originalUrl);
-    next();
-  });
-  staticOptions.index = settings.index ? "index.html" : false;
-  expressApp.use(express.static(root, staticOptions));
-  if (settings.dirs) {
-    expressApp.use(serveIndex(root, {
-      icons: true,
-      stylesheet: path.join(__dirname, "src", "listing.css"),
-      template: path.join(__dirname, "src", "listing.html"),
-    }));
-  }
-  expressApp.use(nonErrorLocalErrorHandler);
-  expressApp.use(localErrorHandler);
   try {
-    debug("starting server");
-    server = expressApp.listen(port, hostname);
-    enableDestroy(server);
-    server.on('error', (e) => {
-       errorToWindow("ERROR:", e.message);
-    });
-    server.on('listening', () => {
+    servez = new Servez(Object.assign({}, settings, {
+      logger: {
+        log: logToWindow,
+        error: errorToWindow,
+      },
+    }));
+    servez.on('start', () => {
       running = true;
       if (!isShell) {
         saveSettings();
       }
       sendToWindow('started');
       sendToWindow('settings', settings);
-      logToWindow("server started on port:", local ? "127.0.0.1:" : "::", port, "for path:", root);
     });
-    server.on('close', serverClosed);
+    servez.on('close', serverClosed);
   } catch (e) {
     debug("error starting server");
     errorToWindow("ERROR:", e, e.message, e.stack);
@@ -252,11 +198,10 @@ function startServer() {
 function stopServer() {
   debug("stopServer");
   debug("running:", running);
-  debug("server:", server);
-  if (running && server) {
+  debug("server:", servez);
+  if (running && servez) {
     debug("stopServer really");
-    //server.close();
-    server.destroy();
+    servez.close();
   }
 }
 
@@ -293,7 +238,7 @@ function updateSettings(event, newSettings) {
 
 function getSettings(event) {
   event.sender.send('settings', settings);
-  event.sender.send((running && server) ? 'started' : 'stopped');
+  event.sender.send((running && servez) ? 'started' : 'stopped');
 }
 
 function launch(event) {
@@ -347,9 +292,8 @@ if (isShell) {
 
   app.on('window-all-closed', () => {
     mainWebContents = null;
-    if (running && server) {
-      //server.close();
-      server.destroy();
+    if (running && servez) {
+      servez.destroy();
     }
     app.quit();
   });
