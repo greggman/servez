@@ -48,6 +48,9 @@ const ipcMain = electron.ipcMain;
 const path = require('path');
 const fs = require('fs');
 const Servez = require('servez-lib');
+const colorSupport = require('color-support') || {}
+const c = require('ansi-colors');
+c.enabled = colorSupport.hasBasic;
 
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -179,6 +182,7 @@ function startServer() {
       logger: {
         log: logToWindow,
         error: errorToWindow,
+        c,
       },
     }));
     servez.on('start', (startInfo) => {

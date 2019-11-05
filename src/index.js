@@ -56,9 +56,65 @@ $(".form").querySelectorAll("input").forEach(elem => {
   }
 });
 
+const codeRE = /\[(\d+)(?:(;\d+)?)m/;
+const colors = {
+  '0': 'black',
+  '1': 'red',
+  '2': 'green',
+  '3': 'orange',
+  '4': 'lightblue',  // blue
+  '5': 'purple',
+  '6': 'cyan',
+  '7': 'white',
+  '01': 'gray',
+  '11': 'pink',
+  '21': 'lightgreen',
+  '31': 'yellow',
+  '41': 'lightblue',
+  '51': 'violet',
+  '61': 'lightcyan',
+  '71': 'white',
+};
+function addANSIColorText(parent, str) {
+  // this is over simplified
+  const parts = str.split('\x1b');
+  parts.filter(p => p !== '').forEach((part) => {
+    const span = document.createElement('span');
+    const m = codeRE.exec(part);
+    if (m) {
+      const [match, code, extra] = m;
+      part = part.substr(match.length);
+      switch (code[0]) {
+        case '0': // reset
+          break;
+        case '1': // bold
+          span.style.fontWeight = 'bold';
+          break;
+        case '3': // fg
+          span.style.color = colors[code[1] + (extra || '')] || '';
+          break;
+        case '4': // underline or bg
+          if (code.length === 1) {
+            span.style.textDecoration = 'underline';
+          } else {
+            span.style.backgroundColor = colors[code[2] + (extra || '')] || '';
+          }
+          break;
+        case '7': // reversed ??
+          break;
+        default:
+          console.log('unhandled ansi-code:', match);
+          break;
+      }
+    }
+    span.textContent = part;
+    parent.appendChild(span);
+  });
+}
+
 function logImpl(className, ...args) {
   const pre = document.createElement("pre");
-  pre.textContent = [...args].join(" ");
+  addANSIColorText(pre, [...args].join(" "));
   pre.className = className
   logElem.appendChild(pre);
   logElem.scrollTop = pre.offsetTop;
