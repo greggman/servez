@@ -50,7 +50,6 @@ const fs = require('fs');
 const Servez = require('servez-lib');
 const colorSupport = require('color-support') || {}
 const c = require('ansi-colors');
-c.enabled = colorSupport.hasBasic;
 
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -115,6 +114,7 @@ function compareArrays(a, b) {
 
 const isShell = args._.length > 0;
 const debug = (process.env.SERVEZ_ECHO && !isShell) ? logToWindow : require('debug')('main');
+c.enabled = colorSupport.hasBasic || !isShell;
 
 function createWindow() {
   const {width: screenWidth, height: screenHeight} = electron.screen.getPrimaryDisplay().workAreaSize;
