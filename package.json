@@ -13,6 +13,10 @@
   "scripts": {
     "start": "cross-env NODE_ENV=development electron main.js",
     "startp": "cross-env NODE_ENV=production electron main.js",
+    "lint": "echo \"TBD\"",
+    "build": "echo \"TBD\"",
+    "test": "echo \"TBD\"",
+    "publish": "electron-builder --publish always",
     "pack": "electron-builder --dir",
     "dist": "electron-builder --publish never"
   },
