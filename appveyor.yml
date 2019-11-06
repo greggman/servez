@@ -1,0 +1,24 @@
+os: unstable
+cache:
+  - node_modules
+environment:
+  matrix:
+    - nodejs_version: 12
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - set CI=true
+  - npm install -g npm@latest
+  - set PATH=%APPDATA%\npm;%PATH%
+  - npm install
+matrix:
+  fast_finish: true
+build: off
+version: '{build}'
+shallow_clone: true
+clone_depth: 1
+test_script:
+  - npm run lint
+  - npm run build
+  - npm run test
+  - npm run publish
+
