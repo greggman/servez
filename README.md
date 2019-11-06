@@ -33,7 +33,7 @@ If you want an actual command line version then [go here](https://github.com/gre
 Otherwise these are the command line arguments to this app version
 of Servez.
 
-**NOTE! You must include a extra `--` *by itself* before your arguments**
+**NOTE! You must include an extra `--` *by itself* before your arguments**
 
 ```
 servez.exe --port=1234 c:\path\to\serve      # BAD!
