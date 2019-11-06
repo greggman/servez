@@ -13,6 +13,9 @@ const clearElem = $("#clear");
 
 launchElem.disabled = true;
 
+const queryParams = Object.fromEntries(new URLSearchParams(window.location.search).entries());
+let startOnLaunch = queryParams.start === 'true';
+
 let startInfo;
 const settingsInfo = {
 };
@@ -137,6 +140,10 @@ ipcRenderer.on('settings', (event, settings) => {
     const info = settingsInfo[id];
     info.set(settings);
   });
+  if (startOnLaunch) {
+    startOnLaunch = false;
+    startServer();
+  }
 });
 
 ipcRenderer.on('log', (event, ...args) => {
@@ -229,11 +236,19 @@ function updateSettings() {
   }
 }
 
+function startServer() {
+  ipcRenderer.send('start');  
+}
+
+function stopServer() {
+  ipcRenderer.send('stop');  
+}
+
 startElem.addEventListener('click', e => {
   if (launchElem.disabled) {
-    ipcRenderer.send('start');
+    startServer();
   } else {
-    ipcRenderer.send('stop');
+    stopServer();
   }
 });
 

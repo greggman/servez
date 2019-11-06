@@ -113,8 +113,9 @@ function compareArrays(a, b) {
 }
 
 const isShell = args._.length > 0;
-const debug = (process.env.SERVEZ_ECHO && !isShell) ? logToWindow : require('debug')('main');
+const debug = (process.env.SERVEZ_ECHO) ? logToWindow : require('debug')('main');
 c.enabled = colorSupport.hasBasic || !isShell;
+let skipSaveBecauseStartedByShell = isShell;
 
 function createWindow() {
   const {width: screenWidth, height: screenHeight} = electron.screen.getPrimaryDisplay().workAreaSize;
@@ -131,7 +132,7 @@ function createWindow() {
     defaultEncoding: "utf8",
   });
 
-  mainWindow.loadURL(`file://${__dirname}/src/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/src/index.html?start=${isShell}`);
   if (isDevMode) {
     mainWindow.webContents.openDevTools();
   }
@@ -187,7 +188,7 @@ function startServer() {
     }));
     servez.on('start', (startInfo) => {
       running = true;
-      if (!isShell) {
+      if (!skipSaveBecauseStartedByShell) {
         saveSettings();
       }
       sendToWindow('started', startInfo);
@@ -205,6 +206,8 @@ function stopServer() {
   debug("running:", running);
   debug("server:", servez);
   if (running && servez) {
+    // if the stopped the server they changed settings manually I think?
+    skipSaveBecauseStartedByShell = false;
     debug("stopServer really");
     servez.close();
   }
@@ -251,11 +254,7 @@ function launch(event, startInfo) {
 }
 
 function logToWindow(...args) {
-  if (isShell) {
-    console.log(...args);
-  } else {
-    sendToWindow('log', ...args);
-  }
+  sendToWindow('log', ...args);
 }
 
 function errorToWindow(...args) {
@@ -287,21 +286,19 @@ if (isShell) {
   settings.index = args.index;
   settings.cors = args.cors;
   settings.root = args._[0];
-  startServer();
-} else {
-
-  app.on('ready', () => {
-    startIfReady();
-  });
-
-  app.on('window-all-closed', () => {
-    mainWebContents = null;
-    if (running && servez) {
-      servez.close();
-    }
-    app.quit();
-  });
 }
+
+app.on('ready', () => {
+  startIfReady();
+});
+
+app.on('window-all-closed', () => {
+  mainWebContents = null;
+  if (running && servez) {
+    servez.close();
+  }
+  app.quit();
+});
 
 function setupMenus() {
   const menuTemplate = [
