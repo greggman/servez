@@ -26,6 +26,50 @@ having to install multiple dependencies nor having to integrate
 things with their system. No adding to paths, no downloading
 3 different pieces of software. Just run and start.
 
+## Command Line Arguments
+
+If you want an actual command line version then [go here](https://github.com/greggman/servez).
+
+Otherwise these are the command line arguments to this app version
+of Servez.
+
+**NOTE! You must include a `--` before your arguments**
+
+```
+servez.exe --port=1234 c:\path\to\serve      # BAD!
+servez.exe -- --port=1234 c:\path\to\serve   # good
+```
+
+On Windows the default path is
+
+```
+c:\Users\<username>\AppData\Local\Programs\Servez\Servez.exe
+```
+
+on MacOS the default path is
+
+```
+/Applications/Servez.app/Contents/MacOS/Servez
+```
+
+### Usage
+
+```
+servez [options] path/to/serve
+```
+
+* `--help` prints the command line arguments
+
+* `-p` or `--port` sets the port as in `--port=1234`
+
+* `--no-dirs` don't show directory listings for folders
+
+* `--no-cors` don't supply CORS headers
+
+* `--local` only allow access from local machine
+
+* `--no-index` don't serve index.html for folders
+
 ## Development
 
 ### Setup
