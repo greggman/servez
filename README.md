@@ -28,7 +28,7 @@ things with their system. No adding to paths, no downloading
 
 ## Command Line Arguments
 
-If you want an actual command line version then [go here](https://github.com/greggman/servez).
+If you want an actual command line version then [go here](https://github.com/greggman/servez-cli).
 
 Otherwise these are the command line arguments to this app version
 of Servez.
