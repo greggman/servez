@@ -96,7 +96,6 @@ servez [options] path/to/serve
     src/index.html   // the main window
     src/index.js     // JS for the main window
     src/style.css    // CSS for the main window
-    src/listing.css  // CSS for directory listings
 
 ### Running
 
