@@ -43,12 +43,11 @@ const isOSX = process.platform === 'darwin';
 const isDevMode = process.env.NODE_ENV === 'development';
 
 const electron = require('electron');
-const webContents = electron.webContents;
 const ipcMain = electron.ipcMain;
 const path = require('path');
 const fs = require('fs');
 const Servez = require('servez-lib');
-const colorSupport = require('color-support') || {}
+const colorSupport = require('color-support') || {};
 const c = require('ansi-colors');
 
 const app = electron.app;
@@ -118,13 +117,6 @@ c.enabled = colorSupport.hasBasic || !isShell;
 let skipSaveBecauseStartedByShell = isShell;
 
 function createWindow() {
-  const {width: screenWidth, height: screenHeight} = electron.screen.getPrimaryDisplay().workAreaSize;
-  const space = 50;
-  const x = space;
-  const y = space;
-  const width = screenWidth - space * 2;
-  const height = screenHeight - space * 2;
-
   mainWindow = new BrowserWindow({
     webPreferences: {
         nodeIntegration: true
