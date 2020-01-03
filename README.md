@@ -26,16 +26,16 @@ having to install multiple dependencies nor having to integrate
 things with their system. No adding to paths, no downloading
 3 different pieces of software. Just run and start.
 
-## https
+## HTTPS
 
-Servez has an option to serve https. Servez
+Servez has an option to serve HTTPS. Servez
 uses a self signed certificate which means your browser will complain
 that the certificate is not valid. You can click "advanced" on the warning
 page and then "Proceed to &lt;localhost&gt;" to load the page.
 
-The point of https support in Servez is to make it easy to access https only APIs
+The point of HTTPS support in Servez is to make it easy to access HTTPS only APIs
 like WebXR etc... Clicking through a warning once in a while is a small tradeoff for
-automating https support.
+automating HTTPS support.
 
 ## Command Line Arguments
 
