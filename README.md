@@ -26,6 +26,17 @@ having to install multiple dependencies nor having to integrate
 things with their system. No adding to paths, no downloading
 3 different pieces of software. Just run and start.
 
+## https
+
+Servez has an option to serve https. Servez
+uses a self signed certificate which means your browser will complain
+that the certificate is not valid. You can click "advanced" on the warning
+page and then "Proceed to &lt;localhost&gt;" to load the page.
+
+The point of https support in Servez is to make it easy to access https only APIs
+like WebXR etc... Clicking through a warning once in a while is a small tradeoff for
+automating https support.
+
 ## Command Line Arguments
 
 If you want an actual command line version then [go here](https://github.com/greggman/servez-cli).
@@ -61,6 +72,8 @@ servez [options] path/to/serve
 * `--help` prints the command line arguments
 
 * `-p` or `--port` sets the port as in `--port=1234`
+
+* `--ssl` use HTTPS (see above)
 
 * `--no-dirs` don't show directory listings for folders
 
