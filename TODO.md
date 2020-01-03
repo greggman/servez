@@ -1,10 +1,10 @@
 # To Do
 
-* Make landing page
 * Make auto build
 
 # Done
 
+* Make landing page
 * Make settings persistent
 * Log Good Requests
 * Fix shutting down server
