@@ -8,6 +8,7 @@ const optionSpec = {
     { option: 'port', alias: 'p', type: 'Int', description: 'port', default: '8080' },
     { option: 'dirs', type: 'Boolean', description: 'show directory listing', default: 'true', },
     { option: 'cors', type: 'Boolean', description: 'send CORS headers', default: 'true', },
+    { option: 'ssl', type: 'Boolean', description: 'use HTTPS', default: 'false', },
     { option: 'local', type: 'Boolean', description: 'local machine only', default: 'false', },
     { option: 'index', type: 'Boolean', description: 'serve index.html for directories', default: 'true', },
   ],
@@ -65,6 +66,7 @@ const defaultSettings = {
   root: app.getPath("home"),
   local: false,
   cors: true,
+  ssl: false,
   dirs: true,
   index: true,
   scan: true,
@@ -277,6 +279,7 @@ if (isShell) {
   settings.local = args.local;
   settings.index = args.index;
   settings.cors = args.cors;
+  settings.ssl = args.ssl;
   settings.root = args._[0];
 }
 
