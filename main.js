@@ -179,6 +179,7 @@ function startServer() {
         error: errorToWindow,
         c,
       },
+      dataDir,
     }));
     servez.on('start', (startInfo) => {
       running = true;

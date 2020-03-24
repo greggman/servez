@@ -45,11 +45,11 @@
     "optionator": "^0.8.2",
     "serve-index": "^1.9.1",
     "server-destroy": "^1.0.1",
-    "servez-lib": "^1.7.0"
+    "servez-lib": "^2.0.0"
   },
   "devDependencies": {
     "cross-env": "^6.0.3",
-    "electron": "^7.0.0",
+    "electron": "^8.1.1",
     "electron-builder": "^21.2.0"
   }
 }
