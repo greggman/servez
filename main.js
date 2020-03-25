@@ -121,8 +121,9 @@ let skipSaveBecauseStartedByShell = isShell;
 function createWindow() {
   mainWindow = new BrowserWindow({
     webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
     },
+    height: 650,
     defaultEncoding: "utf8",
   });
 
