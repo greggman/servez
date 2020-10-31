@@ -70,6 +70,7 @@ const defaultSettings = {
   dirs: true,
   index: true,
   scan: true,
+  extensions: ['html'],
   recent: [],
 };
 const maxRecent = 10;
@@ -283,6 +284,7 @@ if (isShell) {
   settings.cors = args.cors;
   settings.ssl = args.ssl;
   settings.root = args._[0];
+  settings.extensions = ['html'];
 }
 
 app.on('ready', () => {
