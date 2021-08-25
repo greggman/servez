@@ -1,6 +1,6 @@
 # Servez
 
-<img src="icon.png" width="128px" />
+<img src="servez.jpg" width="512px" />
 
 A simple web server for local web development.
 
