@@ -70,6 +70,7 @@ const defaultSettings = {
   dirs: true,
   index: true,
   scan: true,
+  unityHack: true,
   extensions: ['html'],
   recent: [],
 };
