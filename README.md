@@ -123,4 +123,32 @@ in the app
     npm run dist
 
 Will build a file for distribution in the `dist` folder for the current platform.
+Note: On MacOS you'll need an Apple Developer account. Then build like this
 
+```bash
+APPLEID=<your-apple-id> APPLEIDPASS=<see-below-password> npm run dist
+```
+
+For `<your-apple-id>` instead your Apple ID. Example `APPLEID=myaccount@gmail.com` or whatever your
+Apple ID is.
+
+For `<see-below-password>` the first step is go to [https://appleid.apple.com/](https://appleid.apple.com/)
+and generate an *app specific password*. Then, add that password to your keychain with an id of your choosing.
+
+```
+security add-generic-password -a "<your-apple-id>" -w <app-specific-password> -s "<key-id>"
+```
+
+Example:
+
+```
+security add-generic-password -a "myaccount@gmail.com" -w thea-pppa-sswo-rddd -s "foobar"
+```
+
+From then on, to build
+
+```
+APPLEID=myaccount@gmail.com APPLEIDPASS=@keychain:foobar npm run dist
+```
+
+During the build it will ask you to give it access to 'foobar'
