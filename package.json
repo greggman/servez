@@ -1,13 +1,18 @@
 {
   "name": "Servez",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "description": "A Simple Webserver for Localdev with GUI",
   "main": "main.js",
   "build": {
+    "afterSign": "scripts/notarize.js",
     "appId": "com.greggman.servez",
     "asar": true,
     "mac": {
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.developer-tools",
+      "gatekeeperAssess": false,
+      "hardenedRuntime" : true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
     }
   },
   "scripts": {
@@ -50,6 +55,7 @@
   "devDependencies": {
     "cross-env": "^6.0.3",
     "electron": "^8.1.1",
-    "electron-builder": "^21.2.0"
+    "electron-builder": "^21.2.0",
+    "electron-notarize": "^1.1.1"
   }
 }
