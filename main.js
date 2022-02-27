@@ -51,6 +51,8 @@ const Servez = require('servez-lib');
 const colorSupport = require('color-support') || {};
 const c = require('ansi-colors');
 
+require('@electron/remote/main').initialize();
+
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 let mainWindow = null;
@@ -123,11 +125,14 @@ let skipSaveBecauseStartedByShell = isShell;
 function createWindow() {
   mainWindow = new BrowserWindow({
     webPreferences: {
-        nodeIntegration: true,
+      nodeIntegration: true,
+      contextIsolation: false,
     },
     height: 650,
     defaultEncoding: "utf8",
   });
+
+  require("@electron/remote/main").enable(mainWindow.webContents);
 
   mainWindow.loadURL(`file://${__dirname}/src/index.html?start=${isShell}`);
   if (isDevMode) {

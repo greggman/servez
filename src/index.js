@@ -1,6 +1,6 @@
 const $ = document.querySelector.bind(document);
-const {ipcRenderer, remote} = require('electron');
-const dialog = remote.dialog;
+const {ipcRenderer} = require('electron');
+const {dialog, BrowserWindow} = require('@electron/remote')
 const fs = require('fs');
 
 const browseRootElem = $("#browseRoot");
@@ -219,6 +219,9 @@ class Dropdown {
     });
     this.elem.style.display = options.length ? '' : 'none';
   }
+  getOptions() {
+    return [...this.elem.children].map(e => e.texContent);
+  }
 }
 
 function updateSettings() {
@@ -246,6 +249,7 @@ function stopServer() {
 
 startElem.addEventListener('click', e => {
   if (launchElem.disabled) {
+    clearLog();
     startServer();
   } else {
     stopServer();
@@ -257,7 +261,7 @@ launchElem.addEventListener('click', e => {
 });
 
 async function getFolderToServe() {
-  const result = await dialog.showOpenDialog(remote.getCurrentWindow(), {
+  const result = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
     title: "Select Folder to Serve",
     defaultPath: rootElem.value,
     properties: ["openDirectory"],
@@ -281,7 +285,7 @@ settingsInfo.recent = {
     recent.setOptions(settings.recent);
   },
   get: settings => {
-    return settings.recent = settingsInfo.recent;
+    return settings.recent = recent.getOptions();
   },
 };
 
