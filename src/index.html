@@ -7,47 +7,52 @@
     </div>
     <div class="settings">
         <div class="item text" id="rootarea">
-            <label for="root">Folder to Serve</label>
-            <div id="rootpair">
-                <input class="left" type="text" id="root" value=""/>
-                <div class="dropdown" id="recent">
-                  <button type="button">▼</button>
-                  <div tabindex="0"></div>
-                </div>
-                <button class="right" id="browseRoot">...</button>
+          <label for="root">Folder to Serve</label>
+          <div id="rootpair">
+            <input class="left" type="text" id="root" value=""/>
+            <div class="dropdown" id="recent">
+              <button type="button">▼</button>
+              <div tabindex="0"></div>
             </div>
+            <button class="right" id="browseRoot">...</button>
+          </div>
         </div>
-        <div class="item text">
-            <label for="Port">Port:</label>
-            <input type="number" id="port" value=""/>
-        </div>
-        <div class="item checkbox">
-            <label for="dirs">Show Folder Listings</label>
-            <input type="checkbox" id="dirs"/>
-        </div>
-        <div class="item checkbox">
-            <label for="index">Automatically show index.html</label>
-            <input type="checkbox" id="index"/>
-        </div>
-        <div class="item checkbox">
-            <label for="local">Local Machine Only</label>
-            <input type="checkbox" id="local"/>
-        </div>
-        <div class="item checkbox">
-            <label for="cors">Set CORS headers</label>
-            <input type="checkbox" id="cors"/>
-        </div>
-        <div class="item checkbox">
-            <label for="unityHack">Support Unity</label>
-            <input type="checkbox" id="unityHack"/>
-        </div>
-        <div class="item checkbox">
-            <label for="ssl">Use HTTPS</label>
-            <input type="checkbox" id="ssl"/>
-        </div>
-        <div class="buttons">
-            <button id="start">Start</button>
-            <button id="launch">Launch Browser</button>
+        <div class="settings-left-right">
+          <div class="left">
+            <div class="item text">
+                <label for="Port">Port:</label>
+                <input type="number" id="port" value=""/>
+            </div>
+            <div class="item checkbox">
+                <label for="dirs">Show Folder Listings</label>
+                <input type="checkbox" id="dirs"/>
+            </div>
+            <div class="item checkbox">
+                <label for="index">Automatically show index.html</label>
+                <input type="checkbox" id="index"/>
+            </div>
+            <div class="item checkbox">
+                <label for="local">Local Machine Only</label>
+                <input type="checkbox" id="local"/>
+            </div>
+            <div class="item checkbox">
+                <label for="cors">Set CORS headers</label>
+                <input type="checkbox" id="cors"/>
+            </div>
+            <div class="item checkbox">
+                <label for="unityHack">Support Unity</label>
+                <input type="checkbox" id="unityHack"/>
+            </div>
+            <div class="item checkbox">
+                <label for="ssl">Use HTTPS</label>
+                <input type="checkbox" id="ssl"/>
+            </div>
+            <div class="buttons">
+                <button id="start">Start</button>
+                <button id="launch">Launch Browser</button>
+            </div>
+          </div>
+          <div class="right" id="qrcodes"></div>
         </div>
     </div>
   </div>

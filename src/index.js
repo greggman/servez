@@ -5,13 +5,46 @@ const fs = require('fs');
 
 const browseRootElem = $("#browseRoot");
 const rootElem = $("#root");
-const rootareaElem = $("#rootarea");
+const rootAreaElem = $("#rootarea");
 const startElem = $("#start");
 const launchElem = $("#launch");
 const logElem = $("#log");
 const clearElem = $("#clear");
+const qrCodesElem = $("#qrcodes");
+const ctx = document.createElement('canvas').getContext('2d');
+
+import {QrCode, Ecc} from './qrcodegen.js';
 
 launchElem.disabled = true;
+
+function createElem(tag, attrs = {}) { 
+  const elem = document.createElement(tag);
+  for (const [key, value] of Object.entries(attrs)) {
+    if (typeof value === 'object') {
+      for (const [k, v] of Object.entries(value)) {
+        elem[key][k] = v;
+      }
+    } else if (key.startsWith('on')) {
+      const type = key.substring(2);
+      elem.addEventListener(type, value);
+    } else if (elem[key] === undefined) {
+      elem.setAttribute(key, value);
+    } else {
+      elem[key] = value;
+    }
+  }
+  return elem;
+}
+ 
+function addElem(tag, attrs = {}, children  = []) {
+  const elem = createElem(tag, attrs);
+  for (const child of children) {
+    elem.appendChild(child);
+  }
+  return elem;
+}
+
+const el = addElem;
 
 const queryParams = Object.fromEntries(new URLSearchParams(window.location.search).entries());
 let startOnLaunch = queryParams.start === 'true';
@@ -96,7 +129,7 @@ function addANSIColorText(parent, str) {
         case '3': // fg
           span.style.color = colors[code[1] + (extra || '')] || '';
           break;
-        case '4': // underline or bg
+        case '4':s // underline or bg
           if (code.length === 1) {
             span.style.textDecoration = 'underline';
           } else {
@@ -116,9 +149,8 @@ function addANSIColorText(parent, str) {
 }
 
 function logImpl(className, ...args) {
-  const pre = document.createElement("pre");
+  const pre = el('pre', {className});
   addANSIColorText(pre, [...args].join(" "));
-  pre.className = className
   logElem.appendChild(pre);
   logElem.scrollTop = pre.offsetTop;
 }
@@ -152,6 +184,14 @@ ipcRenderer.on('log', (event, ...args) => {
 ipcRenderer.on('error', (event, ...args) => {
   error(...args);
 });
+ipcRenderer.on('host', (event, ...args) => {
+  const localRE = /\D0\.0\.0\.0.\D|\D127\.0\.0\.|\Wlocalhost\W/
+  const [data] = args;
+  const {root} = data;
+  if (!localRE.test(root)) {
+    addQRCode(root);
+  }
+})
 
 ipcRenderer.on('started', (event, newStartInfo) => {
   startInfo = newStartInfo;
@@ -209,11 +249,12 @@ class Dropdown {
   setOptions(options) {
     this.contentElem.innerHTML = '';
     options.forEach((option, ndx) => {
-      const div = document.createElement('div');
-      div.textContent = option;
-      div.addEventListener('click', () => {
-        this.hide();
-        this.callback(option);
+      const div = el('div', {
+        textContent: option,
+        onClick: () => {
+          this.hide();
+          this.callback(option);
+        },
       });
       this.contentElem.appendChild(div);
     });
@@ -231,25 +272,53 @@ function updateSettings() {
     info.get(newSettings);
   });
   if (fs.existsSync(newSettings.root)) {
-    removeClass(rootareaElem, "bad");
+    removeClass(rootAreaElem, "bad");
     ipcRenderer.send('updateSettings', newSettings);
   } else {
     error("non existent path:", newSettings.root);
-    addClass(rootareaElem, "bad");
+    addClass(rootAreaElem, "bad");
   }
 }
 
+function addQRCode(s) {
+  const qr = QrCode.encodeText(s, Ecc.MEDIUM);
+  const scale = 4;
+  ctx.canvas.width = qr.size * scale;
+  ctx.canvas.height = qr.size * scale;
+  ctx.scale(scale, scale);
+  for (let y = 0; y < qr.size; y++) {
+    for (let x = 0; x < qr.size; x++) {
+      ctx.fillStyle = qr.getModule(x, y) ? 'black' : 'white';
+      ctx.fillRect(x, y, 1, 1);
+    }
+  }
+  const img = new Image();
+  img.src = ctx.canvas.toDataURL();
+  qrCodesElem.appendChild(el('div', {
+    className: 'qrcode',
+  }, [
+    el('div', {textContent: s}),
+    img,
+  ]));
+}
+
+function clearQRCodes() {
+  qrCodesElem.innerHTML = '';
+}
+
 function startServer() {
+  clearLog();
+  clearQRCodes();
   ipcRenderer.send('start');  
 }
 
 function stopServer() {
+  clearQRCodes();
   ipcRenderer.send('stop');  
 }
 
 startElem.addEventListener('click', e => {
   if (launchElem.disabled) {
-    clearLog();
     startServer();
   } else {
     stopServer();

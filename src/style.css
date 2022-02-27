@@ -1,3 +1,12 @@
+:root {
+  --main-bg-color: #1a2e5d;
+  --main-fg-color: white;
+  --area-bg-color: #284eb7;
+  --log-bg-color: #001e56;
+  --button-color: #8ca4ff;
+  --button-hover-color: #dc4;
+  --button-hover-border-color: #fff6af;
+}
 html {
   box-sizing: border-box;
 }
@@ -6,8 +15,8 @@ html {
 }
 body {
     margin: 0;
-    background-color: #1a2e5d;
-    color: white;
+    background-color: var(--main-bg-color);
+    color: var(--main-fg-color);
     font-family: sans-serif;
 }
 pre {
@@ -21,6 +30,32 @@ h2 {
     font-size: medium;
     margin-bottom: 1em;
 }
+.settings-left-right {
+    display: flex;
+}
+.settings-left-right .left {
+    flex: 0 0 auto;
+}
+.settings-left-right .right {
+    flex: 1 1 auto;
+}
+
+#qrcodes {
+  text-align: right;
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1em;
+}
+.qrcode {
+  padding: 0.5em;
+  display: inline-block;
+  background: var(--main-bg-color);
+  text-align: center;
+}
+
+
 #outer {
     padding: 1em;
     width: 100vw;
@@ -97,11 +132,11 @@ button {
    border: none;
    padding: .5em 1em;
    text-decoration: none;
-   background-color: #8ca4ff;
+   background-color: var(--button-color);
 }
 button:hover:enabled {
-   box-shadow:inset 1px 1px 0px 0px #fff6af;
-   background-color:#dc4;
+   box-shadow: inset 1px 1px 0px 0px var(--button-hover-border-color);
+   background-color: var(--button-hover-color);
 }
 button:disabled {
     background-color: #888;
@@ -115,7 +150,7 @@ button:disabled {
     vertical-align: middle;
 }
 .settings, #logview, #title {
-    background-color: #284eb7;
+    background-color: var(--area-bg-color);
     padding: 1em;
 }
 #logview {
@@ -132,7 +167,7 @@ button:disabled {
 #log {
     flex: 1 1 auto;
     overflow: auto;
-    background-color: #001e56;
+    background-color: var(--log-bg-color);
     padding: .25em .5em;
 }
 .error {

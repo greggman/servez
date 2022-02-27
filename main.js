@@ -86,10 +86,10 @@ try {
     throw new Error("bad settings");
   }
   keys.forEach(key => {
-    const atype = typeof defaultSettings[key];
-    const btype = typeof settings[key];
-    if (atype !== btype) {
-      throw new Error(`${key} of wrong type. Expected ${atype}, was ${btype}`);
+    const aType = typeof defaultSettings[key];
+    const bType = typeof settings[key];
+    if (aType !== bType) {
+      throw new Error(`${key} of wrong type. Expected ${aType}, was ${bType}`);
     }
   });
 } catch (e) {
@@ -189,6 +189,9 @@ function startServer() {
       },
       dataDir,
     }));
+    servez.on('host', (info) => {
+      sendToWindow('host', info);
+    });
     servez.on('start', (startInfo) => {
       running = true;
       if (!skipSaveBecauseStartedByShell) {
