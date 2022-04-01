@@ -73,6 +73,7 @@ const defaultSettings = {
   index: true,
   scan: true,
   unityHack: true,
+  sharedArrayBuffers: false,
   extensions: ['html'],
   recent: [],
 };

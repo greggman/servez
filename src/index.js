@@ -203,6 +203,7 @@ ipcRenderer.on('stopped', () => {
   startElem.textContent = "Start";
   launchElem.disabled = true;
   log("server stopped");
+  clearQRCodes();
 });
 
 ipcRenderer.send('getSettings');
@@ -283,12 +284,14 @@ function updateSettings() {
 function addQRCode(s) {
   const qr = QrCode.encodeText(s, Ecc.MEDIUM);
   const scale = 4;
-  ctx.canvas.width = qr.size * scale;
-  ctx.canvas.height = qr.size * scale;
+  const padding = 3;
+  const size = qr.size + padding * 2;
+  ctx.canvas.width = size * scale;
+  ctx.canvas.height = size * scale;
   ctx.scale(scale, scale);
-  for (let y = 0; y < qr.size; y++) {
-    for (let x = 0; x < qr.size; x++) {
-      ctx.fillStyle = qr.getModule(x, y) ? 'black' : 'white';
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      ctx.fillStyle = qr.getModule(x - padding, y - padding) ? 'black' : 'white';
       ctx.fillRect(x, y, 1, 1);
     }
   }
