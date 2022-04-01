@@ -92,7 +92,12 @@ input {
 .checkbox label {
     order: 2;
 }
-
+.checkbox a {
+    margin-left: 0.5em;
+    order: 3;
+    color: plum;
+    font-weight: bold;
+}
 .icon {
   
 }
@@ -123,7 +128,7 @@ input {
 }
 
 .buttons {
-    padding-top: s1em;
+    padding-top: 1em;
 }
 .buttons button {
     font-size: large;
