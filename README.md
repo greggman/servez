@@ -73,7 +73,7 @@ servez [options] path/to/serve
 
 * `-p` or `--port` sets the port as in `--port=1234`
 
-* `--ssl` use HTTPS (see above)
+* `-S` or `--ssl` use HTTPS (see above)
 
 * `--no-dirs` don't show directory listings for folders
 
