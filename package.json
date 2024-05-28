@@ -65,7 +65,7 @@
     "optionator": "^0.9.4",
     "serve-index": "^1.9.1",
     "server-destroy": "^1.0.1",
-    "servez-lib": "^2.8.4"
+    "servez-lib": "^2.8.5"
   },
   "devDependencies": {
     "@electron/notarize": "^2.3.2",
