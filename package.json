@@ -4,7 +4,6 @@
   "description": "A Simple Webserver for Localdev with GUI",
   "main": "main.js",
   "build": {
-    "afterSign": "scripts/notarize.js",
     "appId": "com.greggman.servez",
     "asar": true,
     "mac": {
@@ -13,6 +12,9 @@
       "hardenedRuntime": true,
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
+      "notarize": {
+        "teamId": "W22XQZGECM"
+      },
       "target": [
         {
           "target": "dmg",
@@ -65,7 +67,7 @@
     "optionator": "^0.9.4",
     "serve-index": "^1.9.1",
     "server-destroy": "^1.0.1",
-    "servez-lib": "^2.8.5"
+    "servez-lib": "^2.9.3"
   },
   "devDependencies": {
     "@electron/notarize": "^2.3.2",
