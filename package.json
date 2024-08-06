@@ -43,7 +43,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/greggman/saabaa.git"
+    "url": "git+https://github.com/greggman/servez.git"
   },
   "keywords": [
     "http",
@@ -54,9 +54,9 @@
   "author": "Gregg Tavares",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/greggman/saabaa/issues"
+    "url": "https://github.com/greggman/servez/issues"
   },
-  "homepage": "https://github.com/greggman/saabaa#readme",
+  "homepage": "https://github.com/greggman/servez#readme",
   "dependencies": {
     "@electron/remote": "^2.1.2",
     "ansi-colors": "^4.1.3",
