@@ -1,6 +1,6 @@
 {
   "name": "Servez",
-  "version": "1.12.1",
+  "version": "1.12.2",
   "description": "A Simple Webserver for Localdev with GUI",
   "main": "main.js",
   "build": {
